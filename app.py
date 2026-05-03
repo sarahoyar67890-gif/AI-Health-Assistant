@@ -1,12 +1,21 @@
 import streamlit as st
 import numpy as np
 import pickle
+import os
 
 # ======================
-# LOAD MODEL
+# LOAD MODEL SAFELY
 # ======================
-model = pickle.load(open("model.pkl", "rb"))
-cv = pickle.load(open("vectorizer.pkl", "rb"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model_path = os.path.join(BASE_DIR, "model.pkl")
+vectorizer_path = os.path.join(BASE_DIR, "vectorizer.pkl")
+
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
+
+with open(vectorizer_path, "rb") as f:
+    cv = pickle.load(f)
 
 # ======================
 # UI CONFIG
@@ -31,12 +40,11 @@ selected_symptoms = st.multiselect(
 # ======================
 def predict(symptoms_list):
     text = " ".join(symptoms_list)
-    vector = cv.transform([text]).toarray()
+    vector = cv.transform([text])
 
     prediction = model.predict(vector)[0]
     probs = model.predict_proba(vector)[0]
 
-    # top 3 results
     top3_idx = np.argsort(probs)[-3:][::-1]
 
     results = []

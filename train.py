@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -44,7 +45,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # ======================
-# MODEL (IMPROVED)
+# MODEL
 # ======================
 model = RandomForestClassifier(
     n_estimators=300,
@@ -65,16 +66,17 @@ acc = accuracy_score(y_test, y_pred)
 print("Accuracy:", acc)
 
 # ======================
-# SAVE MODEL
+# SAVE MODEL (FIXED)
 # ======================
-import os
-import pickle
-
 BASE_DIR = os.path.dirname(__file__)
 
 model_path = os.path.join(BASE_DIR, "model.pkl")
 vectorizer_path = os.path.join(BASE_DIR, "vectorizer.pkl")
 
-model = pickle.load(open(model_path, "rb"))
-cv = pickle.load(open(vectorizer_path, "rb"))
+with open(model_path, "wb") as f:
+    pickle.dump(model, f)
+
+with open(vectorizer_path, "wb") as f:
+    pickle.dump(cv, f)
+
 print("Model saved successfully ✔️")
