@@ -23,9 +23,6 @@ df["all_symptoms"] = df[symptom_cols].apply(
     axis=1
 )
 
-# ======================
-# FEATURES & LABEL
-# ======================
 X_text = df["all_symptoms"].astype(str)
 y = df["Disease"]
 
@@ -39,9 +36,7 @@ X = cv.fit_transform(X_text)
 # SPLIT
 # ======================
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    test_size=0.2,
-    random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 
 # ======================
@@ -50,8 +45,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = RandomForestClassifier(
     n_estimators=300,
     max_depth=15,
-    min_samples_split=10,
-    min_samples_leaf=2,
     random_state=42
 )
 
@@ -64,14 +57,18 @@ y_pred = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 
 # ======================
-# SAVE MODEL
+# SAVE PATH (IMPORTANT FIX)
 # ======================
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-with open(os.path.join(BASE_DIR, "model.pkl"), "wb") as f:
+model_path = os.path.join(BASE_DIR, "model.pkl")
+vectorizer_path = os.path.join(BASE_DIR, "vectorizer.pkl")
+
+with open(model_path, "wb") as f:
     pickle.dump(model, f)
 
-with open(os.path.join(BASE_DIR, "vectorizer.pkl"), "wb") as f:
+with open(vectorizer_path, "wb") as f:
     pickle.dump(cv, f)
 
-print("Model saved successfully ✔️")
+print("Saved successfully ✔️")
+print("Model path:", model_path)

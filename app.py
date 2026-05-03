@@ -4,15 +4,26 @@ import os
 import pickle
 
 # ======================
-# LOAD MODEL SAFELY
+# BASE PATH FIX
 # ======================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-with open(os.path.join(BASE_DIR, "model.pkl"), "rb") as f:
-    model = pickle.load(f)
+model_path = os.path.join(BASE_DIR, "model.pkl")
+vectorizer_path = os.path.join(BASE_DIR, "vectorizer.pkl")
 
-with open(os.path.join(BASE_DIR, "vectorizer.pkl"), "rb") as f:
-    cv = pickle.load(f)
+# ======================
+# LOAD FILES SAFELY
+# ======================
+try:
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
+
+    with open(vectorizer_path, "rb") as f:
+        cv = pickle.load(f)
+
+except FileNotFoundError:
+    st.error("Model files not found. Please check model.pkl and vectorizer.pkl")
+    st.stop()
 
 # ======================
 # UI
